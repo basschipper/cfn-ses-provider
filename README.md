@@ -70,7 +70,7 @@ If you wish to authorize other AWS accounts, IAM users, and AWS services to send
   IdentityPolicy:
     Type: Custom::IdentityPolicy
     Properties:
-      Identity: !Ref DomainIdentity
+      Identity: !GetAtt 'DomainIdentity.Domain'
       PolicyName: CrossAccountAllow
       PolicyDocument:
         Version: '2012-10-17'
@@ -82,7 +82,7 @@ If you wish to authorize other AWS accounts, IAM users, and AWS services to send
             Action:
               - ses:SendEmail
               - ses:SendRawEmail
-            Resource: !Sub 'arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/binx.io'
+            Resource: !Sub 'arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${DomainIdentity.Domain}'
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-ses-provider'
 ```
 
@@ -107,7 +107,7 @@ You can use these values to create the required DKIM DNS records, as follows:
     Type: AWS::Route53::RecordSetGroup
     Properties:
       HostedZoneId: !Ref 'HostedZone'
-      RecordSets: !Ref 'DkimTokens.RecordSets'
+      RecordSets: !GetAtt 'DkimTokens.RecordSets'
 ```
 ## Installation
 To install these custom resources, type:
